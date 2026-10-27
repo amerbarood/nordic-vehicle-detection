@@ -1,0 +1,7 @@
+path: /home/susmoh3/yolov9-main/data  # dataset root dir
+train: train.txt  # train images (relative to 'path') 
+val: val.txt  # val images (relative to 'path') 
+test: test.txt 
+
+nc: 1
+names: ['Car']

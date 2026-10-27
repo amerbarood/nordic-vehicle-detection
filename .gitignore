@@ -1,0 +1,11 @@
+__pycache__/
+.ipynb_checkpoints/
+.DS_Store
+
+# Dataset images/labels, YOLOv9 source and weights are downloaded, not committed
+data/images/
+data/labels/
+yolov9-main/
+*.pt
+*.zip
+runs/
