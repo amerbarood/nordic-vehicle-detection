@@ -73,27 +73,42 @@ More detections on full frames are in [`results/examples/`](results/examples).
 ## Repository structure
 
 ```
+├── main.py                         # command-line entry point
+├── nvd/
+│   ├── setup_env.py                # download YOLOv9 code, weights, NVD data; write data.local.yaml
+│   ├── yolo.py                     # wrappers for YOLOv9 train_dual / val_dual / detect
+│   ├── baseline.py                 # pretrained YOLOv9-E baseline (Ultralytics)
+│   └── results.py                  # summarise and plot results.csv
 ├── notebooks/
-│   └── yolov9_finetune_nvd.ipynb   # setup, dataset download, fine-tuning, inference
-├── experiments/                    # pretrained baseline attempts
+│   └── yolov9_finetune_nvd.ipynb   # original notebook
+├── experiments/                    # original pretrained-baseline notebooks
 ├── configs/                        # dataset, model, hyperparameter and run configs
 ├── data/splits/                    # train/val/test frame lists
 └── results/                        # metrics CSV, curves, validation batches, example detections
 ```
 
-## Running it
+## Running it (VS Code / Python)
 
-You need a CUDA GPU. Then follow the notebook, which:
-
-1. Downloads the NVD "Labeled Frames (YOLO format)" archive.
-2. Downloads the YOLOv9 repository and the `yolov9-e.pt` weights.
-3. Trains with the configs in `configs/`.
+Training needs a CUDA GPU.
 
 ```bash
-python yolov9-main/train_dual.py --workers 12 --batch 6 --img 640 --epochs 50 \
-  --data configs/data.yaml --weights data/models/yolov9-e.pt \
-  --cfg configs/yolov9_custom.yaml --hyp configs/hyp.scratch-high.yaml --device 0
+python -m venv .venv
+source .venv/bin/activate        # Windows: .venv\Scripts\activate
+pip install -r requirements.txt
+
+python main.py setup --code --weights           # YOLOv9 repo into yolov9-main/, yolov9-e.pt into data/models/
+pip install -r yolov9-main/requirements.txt
+python main.py setup --dataset                  # NVD labeled frames (~24 GB) + configs/data.local.yaml
+#   or, if you already have the dataset:  python main.py setup --prepare /path/to/nvd
+
+python main.py train                            # 50 epochs, batch 6, 640 px (same as the reported run)
+python main.py validate runs/train/nvd_yolov9e/weights/best.pt --task test
+python main.py detect runs/train/nvd_yolov9e/weights/best.pt --sample 5   # or --source <image/folder/video>
+python main.py baseline --sample 5              # pretrained model, no fine-tuning (pip install ultralytics)
+python main.py results                          # table + plot from results/results.csv
 ```
+
+`train`, `validate` and `detect` accept `--dry-run` to print the underlying YOLOv9 command. In VS Code, open the folder, select the `.venv` interpreter and use the **Run and Debug** panel (`.vscode/launch.json`). `pytest` runs checks that need no GPU or downloads.
 
 ## Team
 
