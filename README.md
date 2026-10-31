@@ -26,14 +26,14 @@ The [Nordic Vehicle Dataset (NVD)](https://nvd.ltu-ai.dev), "Labeled Frames" set
 | Validation | 2,903 |
 | Test | 1,190 |
 
-The split lists are in [`data/splits/`](data/splits). The images themselves (about 24 GB) are not stored here; the notebook downloads them.
+The split lists are in [`data/splits/`](data/splits). The images themselves (about 24 GB) are not stored here; `python main.py setup --dataset` downloads them.
 
 ## Approach
 
-**1. Baseline (in [`experiments/`](experiments))**
+**1. Baseline ([`nvd/baseline.py`](nvd/baseline.py))**
 Ran a pretrained YOLOv9-E through Ultralytics with no fine-tuning, then added confidence thresholds, augmentation and precision/recall/mAP measurement. Results were poor, with many false positives and false negatives, which motivated fine-tuning.
 
-**2. Fine-tuning (in [`notebooks/`](notebooks))**
+**2. Fine-tuning ([`nvd/yolo.py`](nvd/yolo.py))**
 - Official [YOLOv9](https://github.com/WongKinYiu/yolov9) implementation, `train_dual.py`, starting from COCO-pretrained `yolov9-e.pt`.
 - Custom single-class model config ([`configs/yolov9_custom.yaml`](configs/yolov9_custom.yaml)).
 - 50 epochs, batch size 6, 640 px images, SGD (lr 0.01, momentum 0.937), on a GPU.
@@ -79,9 +79,6 @@ More detections on full frames are in [`results/examples/`](results/examples).
 │   ├── yolo.py                     # wrappers for YOLOv9 train_dual / val_dual / detect
 │   ├── baseline.py                 # pretrained YOLOv9-E baseline (Ultralytics)
 │   └── results.py                  # summarise and plot results.csv
-├── notebooks/
-│   └── yolov9_finetune_nvd.ipynb   # original notebook
-├── experiments/                    # original pretrained-baseline notebooks
 ├── configs/                        # dataset, model, hyperparameter and run configs
 ├── data/splits/                    # train/val/test frame lists
 └── results/                        # metrics CSV, curves, validation batches, example detections
