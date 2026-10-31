@@ -1,0 +1,10 @@
+# This project's own code
+numpy>=1.24
+pandas>=1.5
+matplotlib>=3.7
+pyyaml>=6.0
+pytest>=7.0
+# Training/detection also needs the YOLOv9 repo's requirements (PyTorch etc.):
+#   python main.py setup --code && pip install -r yolov9-main/requirements.txt
+# Optional, for `python main.py baseline`:
+#   pip install ultralytics opencv-python
